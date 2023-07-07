@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,8 @@ import com.diptopaul.blog.payloads.ApiResponse;
 import com.diptopaul.blog.payloads.UserDto;
 import com.diptopaul.blog.services.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -28,7 +31,7 @@ public class UserController {
 	
 	//POST-create user
 	@PostMapping("/users")
-	public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
+	public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto){
 		UserDto createdUserDto = this.userService.createUser(userDto);
 		return new ResponseEntity<>(createdUserDto,HttpStatus.CREATED);
 	}
@@ -36,7 +39,7 @@ public class UserController {
 	//PUT-update user
 	@PutMapping("/users/{userId}")
 	//public ResponseEntity<UserDto> udpateUser(@RequestBody UserDto userDto, @PathVariable Integer userId){
-	public ResponseEntity<UserDto> udpateUser(@RequestBody UserDto userDto, @PathVariable("userId") Integer uid){
+	public ResponseEntity<UserDto> udpateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer uid){
 		UserDto updatedUserDto = this.userService.updateUser(userDto, uid);
 		return ResponseEntity.ok(updatedUserDto);
 	}

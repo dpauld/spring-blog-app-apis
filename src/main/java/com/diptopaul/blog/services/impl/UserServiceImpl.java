@@ -19,13 +19,20 @@ import com.diptopaul.blog.services.UserService;
 public class UserServiceImpl implements UserService {
 
 	//try task:
-	//make the filed DI to constructor injection
 	//make createUser and updateUser to one method to save as like Chad Derby did
-	@Autowired
+	//@Autowired
 	private UserRepo userRepo;
 	
-	@Autowired
+	//@Autowired
 	private ModelMapper modelMapper;
+	
+	//Construct injection is recommended over field injection
+	//As of Spring Framework 4.3, an @Autowired annotation on such a constructor is no longer necessary if the target bean only defines one constructor to begin with
+	//@Autowired
+	public UserServiceImpl(UserRepo userRepo, ModelMapper modelMapper) {
+		this.userRepo=userRepo;
+		this.modelMapper=modelMapper;
+	}
 	
 	@Override
 	public UserDto createUser(UserDto userDto) {
