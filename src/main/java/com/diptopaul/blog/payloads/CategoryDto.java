@@ -13,13 +13,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CategoryDto {
 	
-	private int categoryId;
+	private int id;
 	
 	@Size(min=4, max=100, message = "title must be min of 4 charachter and at most 100 charachter!!")
 	@NotBlank
-	private String categoryTitle;
+	private String title;
 	
 	@Size(max=250)
 	@NotBlank
-	private String categoryDescription;
+	private String description;
 }

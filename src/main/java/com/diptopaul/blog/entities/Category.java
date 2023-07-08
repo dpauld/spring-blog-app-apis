@@ -19,11 +19,11 @@ public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="id")
-	private int categoryId;
+	private Integer id;
 	
 	@Column(name = "title", length = 100, nullable = false)
-	private String categoryTitle;
+	private String title;
 	
 	@Column(name = "description")
-	private String categoryDescription;
+	private String description;
 }

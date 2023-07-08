@@ -47,8 +47,8 @@ public class CategoryServiceImpl implements CategoryService {
 		Category category = this.categoryRepo.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category", "Id", categoryId));
 		
 		//update the Category fields using the new values of CategoryDto
-		category.setCategoryTitle(categoryDto.getCategoryTitle());
-		category.setCategoryDescription(categoryDto.getCategoryDescription());
+		category.setTitle(categoryDto.getTitle());
+		category.setDescription(categoryDto.getDescription());
 		
 		//call the CategoryRepo method save to commit the update
 		Category updatedCategory = this.categoryRepo.save(category);
@@ -72,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
 		List<Category> categories = this.categoryRepo.findAll();
 		
 		categories.forEach(catDto->{
-			System.out.println(catDto.getCategoryTitle());
+			System.out.println(catDto.getTitle());
 			});
 		
 		//convert all the categories to categoryDtos
