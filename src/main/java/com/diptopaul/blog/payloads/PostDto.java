@@ -1,18 +1,13 @@
 package com.diptopaul.blog.payloads;
 
 import java.util.Date;
-import java.util.List;
-
-import com.diptopaul.blog.entities.Category;
-import com.diptopaul.blog.entities.User;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter

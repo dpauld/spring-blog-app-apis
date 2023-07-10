@@ -2,11 +2,14 @@ package com.diptopaul.blog.services.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.diptopaul.blog.entities.Category;
@@ -14,6 +17,7 @@ import com.diptopaul.blog.entities.Post;
 import com.diptopaul.blog.entities.User;
 import com.diptopaul.blog.exceptions.ResourceNotFoundException;
 import com.diptopaul.blog.payloads.PostDto;
+import com.diptopaul.blog.payloads.PostResponse;
 import com.diptopaul.blog.repositories.CategoryRepo;
 import com.diptopaul.blog.repositories.PostRepo;
 import com.diptopaul.blog.repositories.UserRepo;
@@ -91,17 +95,7 @@ public class PostServiceImpl implements PostService {
 		Post post = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post", "Id", postId));
 		this.postRepo.delete(post);
 	}
-
-	@Override
-	public List<PostDto> getAllPost() {
-		List<Post> posts = this.postRepo.findAll();
-		
-		//convert the posts to PostDtos
-		List<PostDto> postDtos = posts.stream().map((post)->this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
-				
-		return postDtos;
-	}
-
+	
 	@Override
 	public PostDto getPostById(Integer postId) {
 		Post post = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post", "Id", postId));
@@ -136,5 +130,61 @@ public class PostServiceImpl implements PostService {
 	}
 
 	
+	//get all without pagination and sorting
+	@Deprecated
+	@Override
+	public List<PostDto> getAllPost() {
+		List<Post> posts = this.postRepo.findAll();
+		//convert the posts to PostDtos
+		List<PostDto> postDtos = posts.stream().map((post)->this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+				
+		return postDtos;
+	}
+
+	//get all with pagination and sorting, that returns List of PostDto
+	/*
+	 * With Pagination, instead of fetching all the data, spring takes chunks of data from database.
+	 * <p>Generated query is using limit and offset with select query to fetch chunk of the data.
+	 */
+//	@Deprecated
+//	@Override
+//	public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize) {
+//		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+//		Page<Post> pagePosts = this.postRepo.findAll(pageable);
+//		List<Post> posts = pagePosts.getContent();
+//		
+//		//convert the posts to PostDtos
+//		List<PostDto> postDtos = posts.stream().map((post)->this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+//				
+//		return postDtos;
+//	}
+	
+	/*
+	 * get all method for Pagination, that returns PostResponse object that will have pagination information
+	 */
+	@Override
+	public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+		//if desc passed as value then sort by descending order, otherwise sort by ascending
+		Sort sort = (sortDir.equalsIgnoreCase("desc"))?Sort.by(sortBy).descending():Sort.by(sortBy).ascending();
+		
+		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+		
+		Page<Post> pagePosts = this.postRepo.findAll(pageable);
+		
+		//get the chunk of posts
+		List<Post> posts = pagePosts.getContent();
+		//convert the posts to PostDtos
+		List<PostDto> postDtos = posts.stream().map((post)->this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+		
+		//create a PostResponse and set its property
+		PostResponse postResponse = new PostResponse();
+		postResponse.setContent(postDtos);
+		postResponse.setPageNumber(pagePosts.getNumber());
+		postResponse.setPageSize(pagePosts.getSize());
+		postResponse.setTotalElements(pagePosts.getNumberOfElements());
+		postResponse.setTotalPages(pagePosts.getTotalPages());
+		postResponse.setLastPage(pagePosts.isLast());
+		return postResponse;
+	}
 
 }
