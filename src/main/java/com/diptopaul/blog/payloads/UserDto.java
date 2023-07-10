@@ -1,5 +1,10 @@
 package com.diptopaul.blog.payloads;
 
+import java.util.List;
+
+import com.diptopaul.blog.entities.Post;
+
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserDto {
-	private int id;
+	private Integer id;
 	
 	@Size(min=4, message = "name must be min of 4 charachters!! ")
 	@NotEmpty(message = "name required")
@@ -26,7 +31,8 @@ public class UserDto {
 	//order of the annotation matters, the lower the order, it will be checked first
 	private String email;
 	
-	@Size(min=5, max=15, message = "password must be min of 5 charachters and maximum of 15 charachter!!")
+	@Size(min=5, message = "password must be 5 charachters long.")
+	@Size(max=15, message = "password can not exceed 15 charachter.")
 	@Pattern(regexp = ".*[0-9].*", message = "password must contain one digit")
 	@NotEmpty
 	//order of the annotation matters, the lower the order, it will be checked first
