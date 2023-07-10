@@ -167,7 +167,13 @@ public class PostServiceImpl implements PostService {
 		//if desc passed as value then sort by descending order, otherwise sort by ascending
 		Sort sort = (sortDir.equalsIgnoreCase("desc"))?Sort.by(sortBy).descending():Sort.by(sortBy).ascending();
 		
-		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+		Pageable pageable = null;
+		try {
+			pageable = PageRequest.of(pageNumber, pageSize, sort);
+		} catch (Exception e) {
+			// This catches IllegalArgument exception when parameter value passed as negative and zeros(in some cases) pageSize=-1 or pageNumber=-10
+			throw new ResourceNotFoundException("Oops, something went wrong. Please try again later.");
+		}
 		
 		Page<Post> pagePosts = this.postRepo.findAll(pageable);
 		
