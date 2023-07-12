@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.diptopaul.blog.config.AppConstants;
 import com.diptopaul.blog.payloads.ApiResponse;
 import com.diptopaul.blog.payloads.PostDto;
 import com.diptopaul.blog.payloads.PostResponse;
@@ -101,12 +102,20 @@ public class PostController {
 		*/
 		@GetMapping("/posts")
 		ResponseEntity<PostResponse> getAllPost(
-				@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber, 
-				@RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize,
-				@RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
-				@RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir){
+				@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber, 
+				@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+				@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+				@RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir){
 			PostResponse postResponse = this.postService.getAllPost(pageNumber,pageSize,sortBy, sortDir);
 			return new ResponseEntity<>(postResponse,HttpStatus.OK);
+		}
+		
+		//search
+		@GetMapping("/search")
+		ResponseEntity<List<PostDto>> getByTitleContaining(@RequestParam(value = "query", required = false) String query){
+			List<PostDto> postDtos = this.postService.getByTitleContaining(query);
+			return new ResponseEntity<>(postDtos, HttpStatus.OK);
+			
 		}
 		
 }

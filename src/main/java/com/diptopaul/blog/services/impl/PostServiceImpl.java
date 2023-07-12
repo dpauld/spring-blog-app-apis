@@ -171,7 +171,7 @@ public class PostServiceImpl implements PostService {
 		try {
 			pageable = PageRequest.of(pageNumber, pageSize, sort);
 		} catch (Exception e) {
-			// This catches IllegalArgument exception when parameter value passed as negative and zeros(in some cases) pageSize=-1 or pageNumber=-10
+			// This catches IllegalArgument exception when parameter value passed as negative and zeros(in some cases) pageSize=-1 or pageNumber=-10 or sortBy="randomText"
 			throw new ResourceNotFoundException("Oops, something went wrong. Please try again later.");
 		}
 		
@@ -191,6 +191,13 @@ public class PostServiceImpl implements PostService {
 		postResponse.setTotalPages(pagePosts.getTotalPages());
 		postResponse.setLastPage(pagePosts.isLast());
 		return postResponse;
+	}
+	@Override
+	public List<PostDto> getByTitleContaining(String keyword) {
+		// TODO Auto-generated method stub
+		List<Post> posts = this.postRepo.findByTitleContaining(keyword);
+		List<PostDto> postDtos = posts.stream().map((post)->this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+		return postDtos;
 	}
 
 }

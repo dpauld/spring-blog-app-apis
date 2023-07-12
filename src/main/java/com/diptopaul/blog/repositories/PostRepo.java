@@ -3,6 +3,8 @@ package com.diptopaul.blog.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.diptopaul.blog.entities.Category;
 import com.diptopaul.blog.entities.Post;
@@ -17,4 +19,10 @@ public interface PostRepo extends JpaRepository<Post, Integer> {
 	
 	//get all post by User, the caller method will pass a user and it will be used to find the corresponding posts. In real life when user are logged in we use the login info such as user name to fetch their posts.
 	List<Post> findByUser(User user);
+	
+	List<Post> findByTitleContaining(String query);
+	
+	//adding your own query, you can name the function as you want
+//	@Query("Select p from Post p where p.title like %:key%")
+//	List<Post> findByTitleContaining(@Param("key") String query);
 }

@@ -2,6 +2,7 @@ package com.diptopaul.blog.services;
 
 import java.util.List;
 
+import com.diptopaul.blog.entities.Post;
 import com.diptopaul.blog.payloads.PostDto;
 import com.diptopaul.blog.payloads.PostResponse;
 
@@ -31,4 +32,5 @@ public interface PostService {
 	 * get all method for Pagination, that returns PostResponse object that will have pagination information
 	 */
 	PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
+	List<PostDto> getByTitleContaining(String query);
 }
