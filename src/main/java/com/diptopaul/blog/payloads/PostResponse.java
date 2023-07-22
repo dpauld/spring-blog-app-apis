@@ -22,4 +22,6 @@ public class PostResponse {
 	private Integer totalPages;
 	private boolean lastPage;
 	
+	//u can update it to have a nested class inside it to have Paginated Information
+	
 }

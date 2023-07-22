@@ -44,4 +44,9 @@ public class GlobalExceptionHandler {
 		//return the ResponseEntity; apiResponse represent T type that we defined during method definition ResponseEntity<ApiResponse>
 		return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(UnsupportedFileTypeException.class)
+	public ResponseEntity<String> handleUnsupportedFileTypeException(UnsupportedFileTypeException ex) {
+		return ResponseEntity.badRequest().body(ex.getMessage());
+	}
 }

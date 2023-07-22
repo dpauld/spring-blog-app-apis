@@ -72,7 +72,7 @@ public class PostServiceImpl implements PostService {
 
 	//task: got to add update facility of category
 	@Override
-	public PostDto updatePost(PostDto postDto, Integer postId) {
+	public PostDto updatePost(PostDto postDto, Integer postId) throws ResourceNotFoundException {
 		//get the post by postId
 		Post post = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post", "Id", postId));
 		
@@ -90,7 +90,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void deletePost(Integer postId) {
+	public void deletePost(Integer postId) throws ResourceNotFoundException{
 		//could have used deleteById, then we had to deal with exception of resourceNoTFound differently
 		Post post = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post", "Id", postId));
 		this.postRepo.delete(post);
@@ -100,9 +100,12 @@ public class PostServiceImpl implements PostService {
 	public PostDto getPostById(Integer postId) {
 		Post post = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post", "Id", postId));
 		PostDto postDto = this.modelMapper.map(post,PostDto.class);
+		System.out.println(postDto.toString());
+		postDto.getComments().forEach(item->System.out.println(item.toString()));
 		return postDto;
 	}
 
+	//convert this to paginated response
 	@Override
 	public List<PostDto> getByCategory(Integer categoryId) {
 		//Use the categoryId to pass it to the method of categoryRepo to find the Category 

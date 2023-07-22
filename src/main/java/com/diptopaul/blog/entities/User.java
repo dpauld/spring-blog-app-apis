@@ -1,7 +1,16 @@
 package com.diptopaul.blog.entities;
 
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,6 +19,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -22,7 +34,7 @@ import lombok.Setter;
 @Setter
 @Table(name="user")
 @Entity
-public class User {
+public class User{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
@@ -40,6 +52,16 @@ public class User {
 	//an user can have many posts, so OneToMany relationship
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Post> posts;//notice this attribute is not added in the database table of User, cause it's actually mapped by an attribute named user which is part of Post entity class, Hibernate and JPA will use this attribute name and their relationship to make a new field named `user_id` to represent the foreign key 
+
+	//role relationship, EAGER loading - associated roles will be fetched immediately when the user is fetched
+	//referencedColumnName, if not specified JPA will consider the primary key of the corresponding table as the default
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name="user_id", referencedColumnName="id"), inverseJoinColumns = @JoinColumn(name="role_id", referencedColumnName = "id"))
+	private Set<Role> roles = new HashSet<>();
+
+	public String getUsername() {
+		return this.email;
+	}
 }
 /*
  

@@ -1,10 +1,17 @@
 package com.diptopaul.blog.controllers;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,13 +21,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.diptopaul.blog.config.AppConstants;
+import com.diptopaul.blog.exceptions.ResourceNotFoundException;
 import com.diptopaul.blog.payloads.ApiResponse;
 import com.diptopaul.blog.payloads.PostDto;
 import com.diptopaul.blog.payloads.PostResponse;
+import com.diptopaul.blog.services.FileService;
 import com.diptopaul.blog.services.PostService;
+import com.diptopaul.blog.payloads.FileResponse;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -28,10 +40,15 @@ import jakarta.validation.Valid;
 public class PostController {
 	//get the PostService bean object to use its method
 	PostService postService;
+	FileService fileService;
+	
+	@Value("${project.upload-diretory-path}")
+	String UPLOAD_DIR_PATH;
 	
 	@Autowired
-	public PostController(PostService postService) {
+	public PostController(PostService postService, FileService fileService) {
 		this.postService = postService;
+		this.fileService = fileService;
 	}
 	
 	@PostMapping("/users/{userId}/categories/{categoryId}/posts")
@@ -116,6 +133,41 @@ public class PostController {
 			List<PostDto> postDtos = this.postService.getByTitleContaining(query);
 			return new ResponseEntity<>(postDtos, HttpStatus.OK);
 			
+		}
+		
+		//image controller methods
+		//this post method is more of a update image for the post. I might add image addition feature when the post was being created(In Future).
+		@PostMapping("/posts/image/upload/{postId}")
+		public ResponseEntity<PostDto> uploadFile(@RequestParam("image") MultipartFile file, @PathVariable("postId") Integer postId) throws IOException, ResourceNotFoundException {
+			//first find the PostDto a representation of Post, if it exist then there is a point to upload the image, otherwise no reason
+			PostDto postDto = this.postService.getPostById(postId);
+			
+			System.out.println(UPLOAD_DIR_PATH);
+			String newFileName = this.fileService.uploadFile(UPLOAD_DIR_PATH, file);
+			
+			//update the PostDto then also the Post using the added image
+			postDto.setImageName(newFileName);
+			PostDto updatePostDto = this.postService.updatePost(postDto, postId);
+			
+			//you can return the FileResponse as well as PostDto as well
+			
+		    //return ResponseEntity.ok(new FileResponse(newFileName, "Image is uploaded successfully!"));
+			return ResponseEntity.ok(updatePostDto);
+		}
+		
+		//sending the image mimeType Dynamic
+		//this can be improved, usually user might want to get the image when they visit the post, so we can get the post id and then get the image name and serve the post. Here i am serving the post with a direct image name.
+		@GetMapping(value = "/posts/image/{imageName}")
+		public void getImage(@PathVariable("imageName") String imageName, HttpServletResponse httpServletResponse) throws IOException,FileNotFoundException {
+			InputStream inputStream  = this.fileService.getFile(UPLOAD_DIR_PATH, imageName);
+		
+			//dynamically get the mediaType
+			String mimeType = URLConnection.guessContentTypeFromStream(inputStream);
+			httpServletResponse.setContentType(mimeType);
+			httpServletResponse.addHeader("Content-Type", mimeType);
+			//source: https://stackoverflow.com/questions/51438/how-to-get-a-files-media-type-mime-type
+			
+			StreamUtils.copy(inputStream, httpServletResponse.getOutputStream());
 		}
 		
 }

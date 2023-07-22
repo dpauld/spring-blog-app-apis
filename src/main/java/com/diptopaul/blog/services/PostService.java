@@ -29,7 +29,7 @@ public interface PostService {
 	//List<PostDto> getAllPost(Integer pageNumber, Integer pageSize);
 	
 	/*
-	 * get all method for Pagination, that returns PostResponse object that will have pagination information
+	 * get all method for Pagination and Sorting, that returns PostResponse object that will have pagination information
 	 */
 	PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 	List<PostDto> getByTitleContaining(String query);

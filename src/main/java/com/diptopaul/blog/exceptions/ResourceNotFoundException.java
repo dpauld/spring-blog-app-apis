@@ -9,10 +9,10 @@ public class ResourceNotFoundException extends RuntimeException {
 	
 	private String resourceName;
 	private String fieldName;
-	private Integer fieldValue;
+	private Object fieldValue;
 
 	
-	public ResourceNotFoundException(String resourceName, String fieldName, Integer fieldValue) {
+	public ResourceNotFoundException(String resourceName, String fieldName, Object fieldValue) {
 		// TODO Auto-generated constructor stub
 		super(String.format("%s is not found with %s : %s",resourceName,fieldName,fieldValue));
 		

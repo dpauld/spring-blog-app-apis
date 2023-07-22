@@ -2,6 +2,7 @@ package com.diptopaul.blog.services;
 
 import java.util.List;
 
+import com.diptopaul.blog.entities.User;
 import com.diptopaul.blog.payloads.UserDto;
 
 public interface UserService {
