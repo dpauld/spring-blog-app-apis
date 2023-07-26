@@ -70,7 +70,7 @@ public class MappingConfig {
 }
 ```
 #Note
-Passwords
+Test user and their passwords
 Hero Alom heloalomno1
 vombol12345
 julius123

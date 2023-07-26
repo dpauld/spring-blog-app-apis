@@ -45,11 +45,11 @@ public class CustomUserDetailsService implements UserDetailsService{
 //		return new CustomUserDetails(user);
 //	}
 		
-		// or Implementing without Implementing UserDetails by User or a CustomUserDetails class [Bettter, no coupling, does not provide much control]
+		// or Implementing this method without Implementing UserDetails by User or a CustomUserDetails class [Bettter, no coupling, does not provide much control]
 		@Override
 		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 			//load user from db by userName, for this project email is our userName.
-			System.out.println(username);
+			//System.out.println(username);
 			User user = this.userRepo.findByEmail(username).orElseThrow(() -> new ResourceNotFoundException("User","Email",username));
 			return new org.springframework.security.core.userdetails.User(
 		            user.getUsername(),
