@@ -69,6 +69,16 @@ public class MappingConfig {
     }
 }
 ```
+## Features
+1. Reset Password: resetting password with a link that concates a reset token as a parameter.
+	1. Future possible updates: send verification code to take that as an 	input and unable the 	user to reset the password. Similar to current 	implementation, just need to send a 	verification code to the user email 	aka username.
+	2. Use mobile number to send text to reset with mobile number
+	3. Recover account or password with recovery email. Similar to current one, just send a reset 	email to recover email.
+	4. Next
+2. 
+
+## Restricting Based on Role
+1. User deletion api is restricted for users with ROLE_USER. Only ROLE_ADMIN can acess user delete api.
 #Note
 Test user and their passwords
 Hero Alom heloalomno1

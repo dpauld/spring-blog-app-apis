@@ -15,6 +15,7 @@ import com.diptopaul.blog.payloads.ApiResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	
+	@Deprecated
 	@ExceptionHandler(value= {CustomBadCredentialsException.class})
 	public ResponseEntity<ApiResponse> customBadCredentialsException(CustomBadCredentialsException exc) {
 		//read the message from the error class
@@ -25,6 +26,18 @@ public class GlobalExceptionHandler {
 		
 		//return the ResponseEntity; apiResponse represent T type that we defined during method definition ResponseEntity<ApiResponse>
 		return new ResponseEntity<>(apiResponse,HttpStatus.UNAUTHORIZED);
+	}
+	
+	@ExceptionHandler(value= {ApiException.class})
+	public ResponseEntity<ApiResponse> customApiException(ApiException exc) {
+		//read the message from the error class
+		String message = exc.getMessage();
+		
+		//create the response object 
+		ApiResponse apiResponse = new ApiResponse(message, false);
+		
+		//return the ResponseEntity; apiResponse represent T type that we defined during method definition ResponseEntity<ApiResponse>
+		return new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(value= {ResourceNotFoundException.class})

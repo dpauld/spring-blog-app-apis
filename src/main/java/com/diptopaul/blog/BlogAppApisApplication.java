@@ -26,7 +26,8 @@ public class BlogAppApisApplication implements CommandLineRunner{
 	UserRepo userRepo;
 	@Override
 	public void run(String... args) throws Exception {
-//		System.out.println(this.passwordEncoder.encode("diptopro1994"));
+//		System.out.println(emali_str.toLowerCase());
+//		System.out.println(this.passwordEncoder.encode("abir15"));
 //		System.out.println(userRepo.findByEmail("dipto@gmail.com").get().getRoles().stream().map((role)->new SimpleGrantedAuthority(role.getName())).toList());
 //		
 	}

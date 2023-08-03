@@ -19,6 +19,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Access Denied!! Please Login.");
+		
         // Redirect unauthenticated users to the login page
         //response.sendRedirect("/login");
 		

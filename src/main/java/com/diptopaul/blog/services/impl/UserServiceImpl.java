@@ -1,14 +1,18 @@
 package com.diptopaul.blog.services.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.diptopaul.blog.entities.Role;
 import com.diptopaul.blog.entities.User;
 import com.diptopaul.blog.exceptions.ResourceNotFoundException;
 import com.diptopaul.blog.payloads.UserDto;
+import com.diptopaul.blog.repositories.RoleRepo;
 import com.diptopaul.blog.repositories.UserRepo;
 import com.diptopaul.blog.services.UserService;
 
@@ -22,13 +26,17 @@ public class UserServiceImpl implements UserService {
 	
 	//@Autowired
 	private ModelMapper modelMapper;
+	private PasswordEncoder passwordEncoder;
+	private RoleRepo roleRepo;
 	
 	//Construct injection is recommended over field injection
 	//As of Spring Framework 4.3, an @Autowired annotation on such a constructor is no longer necessary if the target bean only defines one constructor to begin with
 	//@Autowired
-	public UserServiceImpl(UserRepo userRepo, ModelMapper modelMapper) {
+	public UserServiceImpl(UserRepo userRepo, ModelMapper modelMapper, PasswordEncoder passwordEncoder, RoleRepo roleRepo) {
 		this.userRepo=userRepo;
 		this.modelMapper=modelMapper;
+		this.passwordEncoder=passwordEncoder;
+		this.roleRepo = roleRepo;
 	}
 	
 	@Override
@@ -80,6 +88,9 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User","Id",userId));
 		
+		//remove foreignkey contrains beofore deletion, otherwise might cause exception or error
+		user.setRoles(Collections.emptySet());
+		
 		this.userRepo.delete(user);
 	}
 	
@@ -114,4 +125,12 @@ public class UserServiceImpl implements UserService {
 		UserDto userDto = this.modelMapper.map(user,UserDto.class);
 		return userDto;
 	}
+
+	@Override
+	public UserDto getUserByEmail(String email) {
+		User user = this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User","Email",email));
+		
+		return this.userToDto(user);
+	}
+
 }
