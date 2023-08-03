@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.diptopaul.blog.entities.PasswordResetToken;
 import com.diptopaul.blog.entities.User;
+import com.diptopaul.blog.exceptions.ResourceNotFoundException;
 import com.diptopaul.blog.payloads.PasswordResetTokenDto;
 import com.diptopaul.blog.payloads.UserDto;
 import com.diptopaul.blog.repositories.PasswordResetTokenRepo;
@@ -52,8 +53,11 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService{
 
 	@Override
 	public void resetPassword(String token, String newPassword) {
+		//read the corresponding entry from db
 		PasswordResetToken resetToken = this.passwordResetTokenRepo.findByToken(token).orElse(null);
-        if (resetToken != null && resetToken.getExpiryDate().isAfter(LocalDateTime.now())) {
+        
+		//this if check is not necessary, cause controller level validateToken method validated this condition too check the implementation of it avobe
+		if (resetToken != null && resetToken.getExpiryDate().isAfter(LocalDateTime.now())) {
             User user = resetToken.getUser();
             user.setPassword(this.passwordEncoder.encode(newPassword));
             // Save the updated user password in the UserRepository
@@ -62,12 +66,19 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService{
             // Delete the password reset token after successful reset
             this.passwordResetTokenRepo.delete(resetToken);
         }
+        
 	}
 	
 	private String generateToken() {
 		// Implement token generation logic here
 		System.out.println();
         return UUID.randomUUID().toString();
+	}
+
+	@Override
+	public PasswordResetTokenDto getPasswordResetTokenByToken(String token) {
+		PasswordResetToken resetToken = passwordResetTokenRepo.findByToken(token).orElseThrow(()->new ResourceNotFoundException("Token", "value", token));
+		return this.modelMapper.map(resetToken, PasswordResetTokenDto.class);
 	}
 
 	

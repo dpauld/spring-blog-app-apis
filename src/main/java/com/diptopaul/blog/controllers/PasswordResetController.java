@@ -1,9 +1,13 @@
 package com.diptopaul.blog.controllers;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.diptopaul.blog.entities.PasswordResetToken;
 import com.diptopaul.blog.entities.User;
+import com.diptopaul.blog.payloads.ApiResponse;
 import com.diptopaul.blog.payloads.PasswordResetTokenDto;
 import com.diptopaul.blog.payloads.UserDto;
 import com.diptopaul.blog.repositories.UserRepo;
@@ -21,6 +26,10 @@ import com.diptopaul.blog.services.PasswordResetTokenService;
 import com.diptopaul.blog.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 @RestController
 @RequestMapping("/api/v1/password")
@@ -49,12 +58,42 @@ public class PasswordResetController {
     }
 
     @PostMapping("/resetPassword")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<ApiResponse> resetPassword(@RequestParam String token, @RequestBody Map<String, String> requestBody) {
         if (this.resetService.validateToken(token)) {
-            this.resetService.resetPassword(token, requestBody.get("newPassword"));
-            return ResponseEntity.ok("Password reset successfully!");
+        	String newPassword = requestBody.get("newPassword");
+        	
+        	/***** Complete newPassword validation code, Alternative could be create a new Entity for Password and validate on that Entity (for now it's not neeeded) *****/
+        	//If token validation succeeds, perform the validation of the new password
+        	PasswordResetTokenDto tokenDto = this.resetService.getPasswordResetTokenByToken(token);
+        	UserDto userDto =  tokenDto.getUserDto();
+        	userDto.setPassword(newPassword);
+        	// Update the user's password, this way we can use the userDto and its validation rules to perform validation on the newPassword
+            userDto.setPassword(newPassword);
+            
+            System.out.println("Nameeeeeeeeeee: " + userDto.getName());
+            // Validate the UserDto based on the validation annotations
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<UserDto>> violations = validator.validateProperty(userDto, "password");
+
+            if (!violations.isEmpty()) {
+            	ConstraintViolation<UserDto> firstViolation = violations.iterator().next();
+                //List<String> errors = Collections.singletonList(firstViolation.getMessage());
+                return ResponseEntity.badRequest().body(new ApiResponse(firstViolation.getMessage(), "password", false));
+                
+//                StringBuilder errorMessages = new StringBuilder();
+//                for (ConstraintViolation<UserDto> violation : violations) {
+//                    errorMessages.append(violation.getMessage()).append("\n");
+//                }
+//                return ResponseEntity.badRequest().body(errorMessages.toString());
+            }
+            /**** *****/
+            
+            // If validation succeeds, update the user's password
+            this.resetService.resetPassword(token, newPassword);
+            return ResponseEntity.ok(new ApiResponse("Password reset successfully!", true));
         }
-        return ResponseEntity.badRequest().body("Invalid or expired token");
+        return ResponseEntity.badRequest().body(new ApiResponse("Invalid or expired token.", false));
     }
 
 	
