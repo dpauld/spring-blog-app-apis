@@ -71,6 +71,15 @@ public class MappingConfig {
 ```
 ## Features
 1. Reset Password: resetting password with a link that concates a reset token as a parameter.
+	* Files involve in this feature:
+		+ PasswordResetController
+		+ MailConfig
+		+ PasswordResetToken Entity class
+		+ PasswordResetTokenDto
+		+ PasswordResetTokenRepo
+		+ PasswordResetTokenService
+		+ PasswordResetTokenServiceImpl
+		+ EmailServiceImpl
 	1. Future possible updates: send verification code to take that as an 	input and unable the 	user to reset the password. Similar to current 	implementation, just need to send a 	verification code to the user email 	aka username.
 	2. Use mobile number to send text to reset with mobile number
 	3. Recover account or password with recovery email. Similar to current one, just send a reset 	email to recover email.

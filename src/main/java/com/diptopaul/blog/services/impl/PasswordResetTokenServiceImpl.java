@@ -52,14 +52,16 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService{
 	}
 
 	@Override
-	public void resetPassword(String token, String newPassword) {
+	public void resetPassword(String token, UserDto userDto) {
 		//read the corresponding entry from db
 		PasswordResetToken resetToken = this.passwordResetTokenRepo.findByToken(token).orElse(null);
         
 		//this if check is not necessary, cause controller level validateToken method validated this condition too check the implementation of it avobe
 		if (resetToken != null && resetToken.getExpiryDate().isAfter(LocalDateTime.now())) {
-            User user = resetToken.getUser();
-            user.setPassword(this.passwordEncoder.encode(newPassword));
+			
+            User user = this.modelMapper.map(userDto, User.class);
+            
+            user.setPassword(this.passwordEncoder.encode(user.getPassword()));
             // Save the updated user password in the UserRepository
             this.userRepo.save(user);
             

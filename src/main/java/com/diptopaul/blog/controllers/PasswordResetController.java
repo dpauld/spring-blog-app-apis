@@ -90,7 +90,7 @@ public class PasswordResetController {
             /**** *****/
             
             // If validation succeeds, update the user's password
-            this.resetService.resetPassword(token, newPassword);
+            this.resetService.resetPassword(token, userDto);
             return ResponseEntity.ok(new ApiResponse("Password reset successfully!", true));
         }
         return ResponseEntity.badRequest().body(new ApiResponse("Invalid or expired token.", false));

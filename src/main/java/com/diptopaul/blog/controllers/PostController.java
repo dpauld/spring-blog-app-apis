@@ -4,7 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.api.exceptions.ApiException;
+import com.cloudinary.utils.ObjectUtils;
+import com.diptopaul.blog.annotations.MultipartFileSize;
 import com.diptopaul.blog.config.AppConstants;
 import com.diptopaul.blog.exceptions.ResourceNotFoundException;
 import com.diptopaul.blog.payloads.ApiResponse;
@@ -32,6 +37,7 @@ import com.diptopaul.blog.services.FileService;
 import com.diptopaul.blog.services.PostService;
 import com.diptopaul.blog.payloads.FileResponse;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
@@ -43,7 +49,10 @@ public class PostController {
 	FileService fileService;
 	
 	@Value("${project.upload-diretory-path}")
-	String UPLOAD_DIR_PATH;
+	private String UPLOAD_DIR_PATH;
+	
+	@Value("${cloudinary.upload-folder-name}")
+	private String UPLOAD_FOLDER_NAME;
 	
 	@Autowired
 	public PostController(PostService postService, FileService fileService) {
@@ -134,40 +143,78 @@ public class PostController {
 			return new ResponseEntity<>(postDtos, HttpStatus.OK);
 			
 		}
-		
+		/*
+		 * <h3>#########Uploading in File System#########</h3>
+		 */
 		//image controller methods
 		//this post method is more of a update image for the post. I might add image addition feature when the post was being created(In Future).
-		@PostMapping("/posts/image/upload/{postId}")
-		public ResponseEntity<PostDto> uploadFile(@RequestParam("image") MultipartFile file, @PathVariable("postId") Integer postId) throws IOException, ResourceNotFoundException {
-			//first find the PostDto a representation of Post, if it exist then there is a point to upload the image, otherwise no reason
-			PostDto postDto = this.postService.getPostById(postId);
-			
-			System.out.println(UPLOAD_DIR_PATH);
-			String newFileName = this.fileService.uploadFile(UPLOAD_DIR_PATH, file);
-			
-			//update the PostDto then also the Post using the added image
-			postDto.setImageName(newFileName);
-			PostDto updatePostDto = this.postService.updatePost(postDto, postId);
-			
-			//you can return the FileResponse as well as PostDto as well
-			
-		    //return ResponseEntity.ok(new FileResponse(newFileName, "Image is uploaded successfully!"));
-			return ResponseEntity.ok(updatePostDto);
-		}
+//		@Deprecated
+//		@PostMapping("/posts/image/upload/{postId}")
+//		public ResponseEntity<PostDto> uploadFile(@Nonnull @RequestParam("image") MultipartFile file, @PathVariable("postId") Integer postId) throws IOException, ResourceNotFoundException, ApiException {
+//			//first find the PostDto a representation of Post, if it exist then there is a point to upload the image, otherwise no reason
+//			PostDto postDto = this.postService.getPostById(postId);
+//			
+//			System.out.println(UPLOAD_DIR_PATH);
+//			String newFileName = (String) this.fileService.uploadFile(UPLOAD_DIR_PATH, file);
+//			
+//			//update the PostDto then also the Post using the added image
+//			postDto.setImageName(newFileName);
+//			PostDto updatePostDto = this.postService.updatePost(postDto, postId);
+//			
+//			//you can return the FileResponse as well as PostDto as well
+//			
+//		    //return ResponseEntity.ok(new FileResponse(newFileName, "Image is uploaded successfully!"));
+//			return ResponseEntity.ok(updatePostDto);
+//		}
 		
 		//sending the image mimeType Dynamic
 		//this can be improved, usually user might want to get the image when they visit the post, so we can get the post id and then get the image name and serve the post. Here i am serving the post with a direct image name.
-		@GetMapping(value = "/posts/image/{imageName}")
-		public void getImage(@PathVariable("imageName") String imageName, HttpServletResponse httpServletResponse) throws IOException,FileNotFoundException {
-			InputStream inputStream  = this.fileService.getFile(UPLOAD_DIR_PATH, imageName);
-		
-			//dynamically get the mediaType
-			String mimeType = URLConnection.guessContentTypeFromStream(inputStream);
-			httpServletResponse.setContentType(mimeType);
-			httpServletResponse.addHeader("Content-Type", mimeType);
-			//source: https://stackoverflow.com/questions/51438/how-to-get-a-files-media-type-mime-type
+//		@GetMapping(value = "/posts/image/{imageName}")
+//		public void getImage(@PathVariable("imageName") String imageName, HttpServletResponse httpServletResponse) throws IOException,FileNotFoundException {
+//			InputStream inputStream  = this.fileService.getFile(UPLOAD_DIR_PATH, imageName);
+//		
+//			//dynamically get the mediaType
+//			String mimeType = URLConnection.guessContentTypeFromStream(inputStream);
+//			httpServletResponse.setContentType(mimeType);
+//			httpServletResponse.addHeader("Content-Type", mimeType);
+//			//source: https://stackoverflow.com/questions/51438/how-to-get-a-files-media-type-mime-type
+//			
+//			StreamUtils.copy(inputStream, httpServletResponse.getOutputStream());
+//		}
+//		
+		/*
+		 * <h3>#########Cloudinary CRUD in to a folder(upload to the project specific sub folder)#########</h3>
+		 */
+		@PostMapping("/posts/image/upload/{postId}")
+		//@MultipartFileSize is not working here, maybe using in an entity might work
+		ResponseEntity<?> uploadImage(@Nonnull @MultipartFileSize(max = AppConstants.MAX_FILE_SIZE, message = "File size should be less than 10MB") @RequestParam("image") MultipartFile imageFileReceived, @PathVariable Integer postId) throws IOException, ApiException{
+			//first find the PostDto a representation of Post, if it exist then there is a point to upload the image, otherwise no reason
+			PostDto postDto = this.postService.getPostById(postId);
 			
-			StreamUtils.copy(inputStream, httpServletResponse.getOutputStream());
+			//upload the image
+			String folderName = UPLOAD_FOLDER_NAME;
+			Object url = fileService.uploadFile(folderName, imageFileReceived);
+			if(url!=null) {
+				postDto.setImageName(url.toString());
+			}
+			//now update the post by this postDto
+			PostDto updatedPostDto = this.postService.updatePost(postDto, postId);
+			
+			return new ResponseEntity<PostDto>(updatedPostDto, HttpStatus.OK);
 		}
+		
+		//delete using cloudinary destroy method, it's a admin api method. Gotta find out how to delete using client side api token
+		//Have to store the signature when uploading the image, currently not implementing it
+//		@DeleteMapping("/delete")
+//		public ResponseEntity<?> deleteImage(@RequestParam("public_id") String publicId, @RequestParam("signature") String signature) throws IOException {
+//			Map<String, Object> params = new HashMap<>();
+//			params.put("signature", signature);
+//			
+//			Map response = cloudinary.uploader().destroy(publicId, params);
+//			//try destroy_method
+//			//https://stackoverflow.com/questions/59802777/delete-an-image-from-cloudinary-using-rest-full-api
+//			//https://cloudinary.com/documentation/image_upload_api_reference#destroy_method
+//			return new ResponseEntity<Map>(response, HttpStatus.OK);
+//		}
 		
 }

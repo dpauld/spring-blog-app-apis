@@ -6,7 +6,9 @@ import java.io.InputStream;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.api.exceptions.ApiException;
+
 public interface FileService {
-	String uploadFile(String uploadDir, MultipartFile fileReceived) throws IOException;
+	Object uploadFile(String uploadDir, MultipartFile fileReceived) throws IOException, ApiException;
 	InputStream getFile(String uploadDir, String fileName) throws FileNotFoundException;
 }

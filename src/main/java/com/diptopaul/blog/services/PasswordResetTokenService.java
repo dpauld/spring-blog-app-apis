@@ -8,5 +8,5 @@ public interface PasswordResetTokenService {
 	public PasswordResetTokenDto getPasswordResetTokenByToken(String token);
 	public PasswordResetTokenDto createToken(UserDto user);
 	public boolean validateToken(String token);
-	public void resetPassword(String token, String newPassword);
+	public void resetPassword(String token, UserDto user);
 }
