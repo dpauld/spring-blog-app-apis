@@ -7,6 +7,6 @@ public class AppConstants {
 	public static final String SORT_DIR = "asc";
 	public static final long MAX_FILE_SIZE = (long) 2097152; //2mb
 	public static final Integer PASSWORD_RESET_EXPIRATION_TIME_MIN = 5;
-	public static final Integer SCHEDULED_PASSWORD_RESET_TOKEN_DELETION_TIME_MS = 60000;
+	//public static final Integer SCHEDULED_PASSWORD_RESET_TOKEN_DELETION_TIME_MS = 300000;//not used
 }
 
