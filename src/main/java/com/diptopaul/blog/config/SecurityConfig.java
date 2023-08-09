@@ -57,11 +57,17 @@ public class SecurityConfig {
 	        .csrf(csrf->csrf.disable())
 	        .authorizeHttpRequests((authz) -> authz
 	        		.requestMatchers("/api/v1/auth/**").permitAll()
-	        		.requestMatchers("/api/v1/password/**").permitAll()
+	        		.requestMatchers("/api/v1/password/**").permitAll()//permit all to reset their password
 	        		.requestMatchers(HttpMethod.GET,"/api/posts/**").permitAll()//all get method of posts controller is open for all
+	        		.requestMatchers(HttpMethod.POST,"/api/posts/**").authenticated()//allow only authenticated user to send POST req to post api's
+	        		.requestMatchers("/api/comments/**").authenticated()//allow only authenticated user to access comment api
+	        		.requestMatchers(HttpMethod.GET,"api/categories/**").permitAll()
+	        		.requestMatchers(HttpMethod.POST,"api/categories/**").hasRole("ADMIN")
+	        		.requestMatchers(HttpMethod.PUT,"api/categories/**").hasRole("ADMIN")
+	        		//delete and put are handled in the controller level methods, for user specific acess
 	        		.anyRequest()
 	        		.authenticated())
-	        .exceptionHandling((e)->e.authenticationEntryPoint(this.jwtAuthenticationEntryPoint).accessDeniedHandler(customAccessDeniedHandler))
+	        .exceptionHandling((e)->e.authenticationEntryPoint(this.jwtAuthenticationEntryPoint).accessDeniedHandler(customAccessDeniedHandler))//The AccessDeniedHandler only applies to authenticated users. Write codes for sending response for unathenticated user inside the jwtAuthenticationEntryPoint.
 	        .sessionManagement((sessionManagement)->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 	        
 	        //basic auth is not needed now

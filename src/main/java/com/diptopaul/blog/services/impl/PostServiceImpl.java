@@ -18,6 +18,7 @@ import com.diptopaul.blog.entities.User;
 import com.diptopaul.blog.exceptions.ResourceNotFoundException;
 import com.diptopaul.blog.payloads.PostDto;
 import com.diptopaul.blog.payloads.PostResponse;
+import com.diptopaul.blog.payloads.UserDto;
 import com.diptopaul.blog.repositories.CategoryRepo;
 import com.diptopaul.blog.repositories.PostRepo;
 import com.diptopaul.blog.repositories.UserRepo;
@@ -202,5 +203,14 @@ public class PostServiceImpl implements PostService {
 		List<PostDto> postDtos = posts.stream().map((post)->this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
 		return postDtos;
 	}
-
+	
+	@Override
+	public Boolean isOwnerOfPost(Integer postId, String username) {
+		Post post = this.postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post","Id", postId));
+		String postOwner = post.getUser().getUsername();
+		//or
+//		User user = this.postRepo.findUserByPostId(postId).orElseThrow(()->new ResourceNotFoundException("Owner of the Post", "Id", postId));
+//		String postOwner = user.getUsername();
+		return postOwner.equals(username);
+	}
 }

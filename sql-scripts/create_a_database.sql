@@ -1,0 +1,1 @@
+CREATE SCHEMA `blog_app_apis` ;

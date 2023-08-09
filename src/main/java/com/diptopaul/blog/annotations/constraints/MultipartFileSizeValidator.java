@@ -1,6 +1,8 @@
-package com.diptopaul.blog.annotations;
+package com.diptopaul.blog.annotations.constraints;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.diptopaul.blog.annotations.MultipartFileSize;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -1,6 +1,7 @@
 package com.diptopaul.blog.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +26,7 @@ public interface PostRepo extends JpaRepository<Post, Integer> {
 	//adding your own query, you can name the function as you want
 //	@Query("Select p from Post p where p.title like %:key%")
 //	List<Post> findByTitleContaining(@Param("key") String query);
+	
+	 @Query("SELECT p.user FROM Post p WHERE p.id = :postId")
+	 Optional<User> findUserByPostId(Integer postId);
 }

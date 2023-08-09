@@ -24,6 +24,7 @@ import com.diptopaul.blog.payloads.JwtAuthResponse;
 import com.diptopaul.blog.payloads.UserDto;
 import com.diptopaul.blog.security.JwtHelperService;
 import com.diptopaul.blog.services.impl.AuthServiceImpl;
+import com.diptopaul.blog.validationgroup.BaseValidation;
 
 import jakarta.validation.Valid;
 
@@ -73,7 +74,7 @@ public class AuthenticationController {
 	
 	//for registration
 	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@Validated @RequestBody UserDto userDto){
+	public ResponseEntity<?> registerUser(@Validated(BaseValidation.class) @RequestBody UserDto userDto){
 		UserDto registeredUserDto = this.authServiceImpl.registerUser(userDto);
 		return new ResponseEntity<UserDto>(registeredUserDto, HttpStatus.CREATED);
 	}

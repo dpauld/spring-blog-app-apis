@@ -2,6 +2,8 @@ package com.diptopaul.blog.annotations;
 
 import java.lang.annotation.*;
 
+import com.diptopaul.blog.annotations.constraints.MultipartFileSizeValidator;
+
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

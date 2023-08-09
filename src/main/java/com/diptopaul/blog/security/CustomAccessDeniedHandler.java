@@ -27,7 +27,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 //        Map<String, String> jsonResponse = new HashMap<>();
 //        jsonResponse.put("success", "false");
 //        jsonResponse.put("message", "You don't have permission to access this resource.");
-		
+		System.out.println("Executes" + this.getClass());
 		ApiResponse jsonResponse = new ApiResponse("You don't have permission to access this resource.", false);
 		
         // Convert the JSON response to a string

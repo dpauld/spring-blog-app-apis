@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,12 +67,20 @@ public class PostController {
 		return new ResponseEntity<>(createdPostDto, HttpStatus.CREATED);
 	}
 	//update
+//	@PutMapping("/posts/{postId}")
+//	ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto,@PathVariable Integer postId){
+//		PostDto updatedPostDto = this.postService.updatePost(postDto, postId);
+//		return new ResponseEntity<PostDto>(updatedPostDto,HttpStatus.OK);
+//	}
+	@PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and @customPermissionEvaluator.hasPermission(#postId, 'Post', 'edit'))")
 	@PutMapping("/posts/{postId}")
 	ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto,@PathVariable Integer postId){
 		PostDto updatedPostDto = this.postService.updatePost(postDto, postId);
 		return new ResponseEntity<PostDto>(updatedPostDto,HttpStatus.OK);
 	}
+	
 	//delete
+	@PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and @customPermissionEvaluator.hasPermission(#postId, 'Post', 'edit'))")
 	@DeleteMapping("/posts/{postId}")
 	ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId){
 		this.postService.deletePost(postId);
@@ -81,28 +90,29 @@ public class PostController {
 	//get single ById
 	@GetMapping("/posts/{postId}")
 	ResponseEntity<PostDto> getPostByid(@PathVariable Integer postId){
+		System.out.println("posts single");
 		PostDto postDto = this.postService.getPostById(postId);
 		return new ResponseEntity<>(postDto,HttpStatus.OK);
 	}
 	
 	//getByUser
-		@GetMapping("/users/{userId}/posts")
-		ResponseEntity<List<PostDto>> getByUser(@PathVariable Integer userId){
-			//get the posts as Dtos format
-			List<PostDto> postDtos = this.postService.getByUser(userId);
-			
-			//return them
-			return new ResponseEntity<>(postDtos,HttpStatus.OK);
-		}
-		//getByCategory
-		@GetMapping("/categories/{categoryId}/posts")
-		ResponseEntity<List<PostDto>> getByCategory(@PathVariable Integer categoryId){
-			//get the posts as Dtos format
-			List<PostDto> postDtos = this.postService.getByCategory(categoryId);
-			
-			//return them
-			return new ResponseEntity<>(postDtos,HttpStatus.OK);
-		}
+	@GetMapping("/users/{userId}/posts")
+	ResponseEntity<List<PostDto>> getByUser(@PathVariable Integer userId){
+		//get the posts as Dtos format
+		List<PostDto> postDtos = this.postService.getByUser(userId);
+		
+		//return them
+		return new ResponseEntity<>(postDtos,HttpStatus.OK);
+	}
+	//getByCategory
+	@GetMapping("/categories/{categoryId}/posts")
+	ResponseEntity<List<PostDto>> getByCategory(@PathVariable Integer categoryId){
+		//get the posts as Dtos format
+		List<PostDto> postDtos = this.postService.getByCategory(categoryId);
+		
+		//return them
+		return new ResponseEntity<>(postDtos,HttpStatus.OK);
+	}
 		
 		//get all without pagination and sorting
 		

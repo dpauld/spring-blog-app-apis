@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,6 +42,7 @@ import lombok.ToString;
 @Setter
 @Table(name="user")
 @Entity
+@DynamicUpdate
 public class User{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,6 +51,7 @@ public class User{
 	@Column(name = "name", length = 100, nullable = false)
 	private String name;
 	
+	//@Column(unique = true, nullable = false, updatable = false)
 	@Column(unique = true, nullable = false)
 	private String email;
 	
@@ -71,6 +74,9 @@ public class User{
 	public String getUsername() {
 		return this.email;
 	}
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Comment> comments;
 }
 /*
  

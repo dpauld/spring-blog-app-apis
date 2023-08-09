@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.diptopaul.blog.config.AppConstants;
 import com.diptopaul.blog.entities.PasswordResetToken;
 import com.diptopaul.blog.entities.User;
 import com.diptopaul.blog.exceptions.ResourceNotFoundException;
@@ -23,7 +24,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService{
 	
-	private static final int EXPIRATION_TIME_MIN = 5;
+	private final int EXPIRATION_TIME_MIN = AppConstants.PASSWORD_RESET_EXPIRATION_TIME_MIN;//defaut 5 min
 	
 	private PasswordResetTokenRepo passwordResetTokenRepo;
 	private ModelMapper modelMapper;
@@ -54,16 +55,21 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService{
 	@Override
 	public void resetPassword(String token, UserDto userDto) {
 		//read the corresponding entry from db
-		PasswordResetToken resetToken = this.passwordResetTokenRepo.findByToken(token).orElse(null);
-        
+		PasswordResetToken resetToken = passwordResetTokenRepo.findByToken(token).orElseThrow(()->new ResourceNotFoundException("Token", "value", token));
+		
 		//this if check is not necessary, cause controller level validateToken method validated this condition too check the implementation of it avobe
 		if (resetToken != null && resetToken.getExpiryDate().isAfter(LocalDateTime.now())) {
-			
-            User user = this.modelMapper.map(userDto, User.class);
+			User existingUser =  resetToken.getUser();
+//			System.out.println(existingUser.toString());
+
+			//update existingUser by the userDto that contains the changed password field
+			this.modelMapper.map(userDto, existingUser);
+
+			//encode the new password
+			existingUser.setPassword(this.passwordEncoder.encode(existingUser.getPassword()));
             
-            user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-            // Save the updated user password in the UserRepository
-            this.userRepo.save(user);
+			// Save the updated user password in the UserRepository
+            this.userRepo.save(existingUser);
             
             // Delete the password reset token after successful reset
             this.passwordResetTokenRepo.delete(resetToken);

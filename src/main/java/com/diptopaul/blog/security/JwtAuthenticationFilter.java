@@ -10,6 +10,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.diptopaul.blog.exceptions.ApiException;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.annotation.Nonnull;
@@ -29,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	
 	@Override
 	protected void doFilterInternal(@Nonnull HttpServletRequest request,@Nonnull HttpServletResponse response,@Nonnull FilterChain filterChain)
-			throws ServletException, IOException {
+			throws ServletException, IOException, ApiException {
 		final String authHeader = request.getHeader("Authorization");
 		final String jwt;
 		String userEmail=null;
@@ -48,6 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 			System.out.println("Unable to get Jwt token");
 		}catch(ExpiredJwtException e){
 			System.out.println("Jwt token has expired");
+			//e.printStackTrace();
+			System.out.println();
+			//throw new ApiException("Jwt token has expired");
 		}catch(MalformedJwtException e){
 			System.out.println("Invalid JWT");
 		}

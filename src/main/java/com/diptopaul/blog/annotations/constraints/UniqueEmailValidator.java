@@ -1,9 +1,10 @@
-package com.diptopaul.blog.annotations;
+package com.diptopaul.blog.annotations.constraints;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.diptopaul.blog.annotations.UniqueEmail;
 import com.diptopaul.blog.entities.User;
 import com.diptopaul.blog.payloads.UserDto;
 import com.diptopaul.blog.repositories.UserRepo;

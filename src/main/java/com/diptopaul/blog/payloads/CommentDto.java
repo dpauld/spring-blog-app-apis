@@ -17,5 +17,9 @@ public class CommentDto {
 	
 	@NotBlank
 	private String content;
-	//private Post post;// this might cause data bind error, cause we needed to map it nested way from entity comment to Dto
+	
+	//private PostDto postDto;// this might cause data bind error, cause we needed to map it nested way from entity comment to Dto
+	
+	// dont put NotNull or this type of validation here, cause front-end might not provide the userDto, we will inject it in business logic layer
+	private UserDto user;
 }

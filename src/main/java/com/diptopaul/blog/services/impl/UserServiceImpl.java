@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,13 +56,15 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User","Id",userId));
 		
-		user.setName(userDto.getName());
-		user.setEmail(userDto.getEmail());
-		user.setAbout(userDto.getAbout());
-		user.setPassword(userDto.getPassword());
+//		user.setName(userDto.getName());
+//		user.setEmail(userDto.getEmail());
+//		user.setAbout(userDto.getAbout());
+//		user.setPassword(userDto.getPassword());
+		//this.userMapper.updateUserFromDto(userDto, user);
+		this.modelMapper.map(userDto, user);
 		
 		User updatedUser = this.userRepo.save(user);
-		
+		//mapper.updateCustomerFromDto(dto, myCustomer);
 		return this.userToDto(updatedUser);
 	}
 
@@ -131,6 +134,12 @@ public class UserServiceImpl implements UserService {
 		User user = this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User","Email",email));
 		
 		return this.userToDto(user);
+	}
+
+	@Override
+	public boolean isOwnerOfUser(Integer userId, String username) {
+		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User","Id",userId));
+		return username.equals(user.getUsername());
 	}
 
 }

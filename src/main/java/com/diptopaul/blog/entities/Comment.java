@@ -32,4 +32,7 @@ public class Comment {
 	@ManyToOne
 	//@JoinColumn(name="post_id")
 	private Post post;
+	
+	@ManyToOne//many comment can belong to one user
+	private User user;
 }

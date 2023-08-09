@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.diptopaul.blog.repositories.UserRepo;
 
+import lombok.AllArgsConstructor;
+
 @SpringBootApplication
 public class BlogAppApisApplication implements CommandLineRunner{
 
@@ -39,3 +41,4 @@ public class BlogAppApisApplication implements CommandLineRunner{
 //	}
 
 }
+

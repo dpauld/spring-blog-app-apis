@@ -5,6 +5,7 @@ import java.util.List;
 import com.diptopaul.blog.entities.Post;
 import com.diptopaul.blog.payloads.PostDto;
 import com.diptopaul.blog.payloads.PostResponse;
+import com.diptopaul.blog.payloads.UserDto;
 
 public interface PostService {
 	//create
@@ -33,4 +34,6 @@ public interface PostService {
 	 */
 	PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 	List<PostDto> getByTitleContaining(String query);
+	
+	Boolean isOwnerOfPost(Integer postId, String username);
 }
