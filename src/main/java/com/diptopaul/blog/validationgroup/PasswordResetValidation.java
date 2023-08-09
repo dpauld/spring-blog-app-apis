@@ -1,5 +1,5 @@
 package com.diptopaul.blog.validationgroup;
-//not used anywhere, might use when validating PasswordReset
+//not used anywhere, used in the resetPasswordController class
 public interface PasswordResetValidation{
 	
 }
