@@ -688,9 +688,10 @@ Alternatively, in straight words, we are effectively telling Spring Security tha
     1. [rest - How to allow a User only access their own data in Spring Boot / Spring Security? - Stack Overflow](https://stackoverflow.com/questions/51712724/how-to-allow-a-user-only-access-their-own-data-in-spring-boot-spring-security)
     2. [Spring Security: allow user only to access their own administration page - Stack Overflow](https://stackoverflow.com/questions/6871203/spring-security-allow-user-only-to-access-their-own-administration-page)
      	- [x] Restricting specific post edit or delete access for users other than the owner
-- [x] Can we exclude some fields of the entity from the validation check? Specificly for user?
-    1. [https://stackoverflow.com/a/29798591/7828981](https://stackoverflow.com/a/29798591/7828981)
-    2. [Validation groups in Spring MVC (javacodegeeks.com)](https://www.javacodegeeks.com/2014/08/validation-groups-in-spring-mvc.html)
+- [x] Can we exclude some fields of the entity from the validation check? Specificly passward field for validation during user update?
+    1.[https://stackoverflow.com/a/29798591/7828981](https://stackoverflow.com/a/29798591/7828981)
+    2.	[Grouping Javax Validation Constraints (baeldung)](https://www.baeldung.com/javax-validation-groups)
+    3. [Validation groups in Spring MVC (javacodegeeks.com)](https://www.javacodegeeks.com/2014/08/validation-groups-in-spring-mvc.html)
     3. [Chapter 2. Validation step by step (jboss.org)](https://docs.jboss.org/hibernate/validator/4.1/reference/en-US/html/validator-usingvalidator.html#validator-usingvalidator-validationgroups)
 - [x] Enabling Partial Update for User, where I don't have to update Password and Email every time.
     1. 
