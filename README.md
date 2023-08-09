@@ -358,24 +358,19 @@ public class ModelMapperConfig {
     2. Create Config class
     3. Update the code
 6. Validation
-    4. Add dependency spring-boot-starter-validation
-    5. Now the question is where and what field should we validate?
+	1. Add dependency spring-boot-starter-validation
+	2. Now the question is where and what field should we validate?
         1. Well, whenever a Rest request is performed say a POST request, inside the rest controller, we are receiving the data by UserDto which is bonded by the data passed inside the Body of the request. We need to put our validation code inside the fields of UserDto class.
 
         ```
-        
-
         @PostMapping("/users")
         public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
            UserDto createdUserDto = this.userService.createUser(userDto);
            return new ResponseEntity<>(createdUserDto,HttpStatus.CREATED);
         }
-        ```
-
-
-        2. 
-    6. Add validation annotation @Size, @NotNull, etc;
-    7. Add @Valid annotation before all the arguments of Rest Controller method
+        ``` 
+    3. Add validation annotation @Size, @NotNull, etc;
+    4. Add @Valid annotation before all the arguments of Rest Controller method
 
         ```
         @PostMapping("/users")
@@ -384,32 +379,23 @@ public class ModelMapperConfig {
            return new ResponseEntity<>(createdUserDto,HttpStatus.CREATED);
         }
         ```
-
-
-    8. Handle the exception in the GlobalException class with the Help of @RestControllerAdvice and @ExceptionalHandler annotation
-    9. Test the API using Postman
-7. Making API for Category and also using the model mapper [4:12:31](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=15151s)
-    10. Task Pending?: Maybe I should change the name of the fields of Category Entity and Dto to title instead of categoryTitle? This way during the PostMan test we don't have to use,categoryTitle and categoryDescription.
-
+    5. Handle the exception in the GlobalException class with the Help of @RestControllerAdvice and @ExceptionalHandler annotation
+    6. Test the API using Postman
+7. Making API for Category and also using the model mapper
+    1. Task Pending?: Maybe I should change the name of the fields of Category Entity and Dto to title instead of categoryTitle? This way during the PostMan test we don't have to use,categoryTitle and categoryDescription.
+		```
         {
-
-
             "categoryTitle":"Fashion",
-
-
             "categoryDescription":"This Category contains topics related to Fashion"
-
-
         }
-
-
-        Instead, we can use just the title and description. Will look more professional.
+       ```
+     	Instead, we can use just the title and description. Will look more professional.
 
 8. Validation for Category
 9. Test the API using Postman
 10. Creating Post APIs
-    11. Testing them
-11. [6:27:15](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=23235s) Pagination(Only PostDtos list related to particular page)
+	1. Testing them
+11. Pagination(Only PostDtos list related to particular page)
 
 ->pageSize and pageNumber
 
@@ -417,29 +403,26 @@ public class ModelMapperConfig {
 
 [http://localhost:9090/posts?pageSize=5&pageNo=2&sortBy=title](http://localhost:9090/posts?pageSize=5&pageNo=2&sortBy=title)
 
-	Highlighted stuff followed by? are parameter list
-
-
-
-    12. Proposed step: Handling negative and 0 passed in pagination page and pageSize value. That generates IllegalArgument Exception.
-12. [07:32:19](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=27139s) Working on the post image
-    13. Image Upload
-    14. Image serving
-        3. Image can be served in several ways,
+	* Highlighted stuff followed by? are parameter list
+   	a. Proposed step: Handling negative and 0 passed in pagination page and pageSize value. That generates IllegalArgument Exception.
+12. Working on the post image
+    1. Image Upload
+    2. Image serving
+        1. Image can be served in several ways,
             1. As a URL
             2. As a Byte array
             3. As an InputStream
-13. [07:57:51](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=28671s) Creating Comments APIs 
-14. [8:29:04](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=30544s) Securing REST Apis and [08:41:07](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=31267s) Spring Security Basic Auth
-    15. Create Security Basic Config
-    16. Create a Roles Entity for creating a Role table
-    17. Use the relationship between User and Roles and make a Jointable ‘user_role’
-    18.  **Implements UserDetailsService: **Create a class named **_CustomUserDetailService _**that Implements **_UserDetailsService_**
-        4. Override **_UserDetails loadUserByUsername _**method that will define **_Email _**as our customize **_Username_**
-        5. It must return a _UserDetails _object or its child object. To achieve this Implement the UserDetais by a class. See **step e**.
-    19. **Implement UserDetails_: _**To have an Instance of UserDetails for spring to inject the Bean of type UserDetails, implement the **_UserDetails_**.
-        6. Option 1 (Main Project Tutorial): Extend UserDetails by the User class and override its methods accordingly
-        7. Option 2 (Recommended): Extend UserDetails by a CustomUserDetails class and override its methods accordingly. Thus ensuring decoupling and making sure separation of concern.
+13. Creating Comments APIs 
+14. Securing REST Apis and Spring Security Basic Auth
+    1. Create Security Basic Config
+    2. Create a Roles Entity for creating a Role table
+    3. Use the relationship between User and Roles and make a Jointable ‘user_role’
+    4.  **Implements UserDetailsService: **Create a class named **_CustomUserDetailService _**that Implements **_UserDetailsService_**
+        1. Override **_UserDetails loadUserByUsername _**method that will define **_Email _**as our customize **_Username_**
+        2. It must return a _UserDetails _object or its child object. To achieve this Implement the UserDetais by a class. See **step e**.
+    5. **Implement UserDetails_: _**To have an Instance of UserDetails for spring to inject the Bean of type UserDetails, implement the **_UserDetails_**.
+        1. Option 1 (Main Project Tutorial): Extend UserDetails by the User class and override its methods accordingly
+        2. Option 2 (Recommended): Extend UserDetails by a CustomUserDetails class and override its methods accordingly. Thus ensuring decoupling and making sure separation of concern.
 
             ```
             import org.springframework.security.core.GrantedAuthority;
@@ -478,23 +461,22 @@ public class ModelMapperConfig {
                 // ...
             }
             ```
-
-
-    20. Update the Config to provide an instance of CustomUserDetailsService
-    21. Update the Config to Specify PasswordEncoder Type by creating a Bean
-15. [09:47:25](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=35245s) JWT implementing in the project - [Spring Boot 3 + Spring Security 6 - JWT Authentication and Authorisation [NEW] [2023] - YouTube](https://www.youtube.com/watch?v=KxqlJblhzfI&ab_channel=Amigoscode)
-    22. Add dependency(io.jsonwebtoken)
-    23. Create JWT authenticationEntryPoint implements AuthenticationEntryPoint
-    24. Create JWTTokenHelper
-    25. JwtAuthenticationFilter extends OnceRequestFilter
-        8. Get jwt token from response
-        9. Validate token I
-        10. Get user from token
-        11.  Load user associated with token
-        12. Set spring security
-    26. Create JwtAuthResponse
-16. [10:44:18](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=38658s) Role-Specific Access
-17. [11:02:31](https://www.youtube.com/watch?v=Uh-N_6Lccr4&t=39751s) Challenges while registering app
+    3. Update the Config to provide an instance of CustomUserDetailsService
+    4. Update the Config to Specify PasswordEncoder Type by creating a Bean
+15. JWT implementation in the project - Spring Boot 3 + Spring Security 6 - JWT Authentication and Authorisation [NEW] [2023
+    1. Add dependency(io.jsonwebtoken)
+    2. Create JWT authenticationEntryPoint implements AuthenticationEntryPoint
+    3. Create JWTTokenHelper
+    4. JwtAuthenticationFilter extends OnceRequestFilter
+        1. Get jwt token from response
+        2. Validate token I
+        3. Get user from token
+        4.  Load user associated with token
+        5. Set spring security
+    5. Create JwtAuthResponse
+16. Role-Specific Access
+17. Challenges while registering app
+18. 
 
 
 ## Working on the Image Upload
