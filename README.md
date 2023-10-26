@@ -8,11 +8,10 @@ This application provides api's for a blog application.
 	1. spring.datasource.url=jdbc:mysql://localhost:portAddress/projectName
 	2. spring.datasource.username=username
 	3. spring.datasource.password=password
-Example,
-
-	1. spring.datasource.url=jdbc:mysql://localhost:3306/blog_app_apis
-	2. spring.datasource.username=springboot
-	3. spring.datasource.password=springboot
+	4. An Example,
+		1. spring.datasource.url=jdbc:mysql://localhost:3306/blog_app_apis
+		2. spring.datasource.username=springboot
+		3. spring.datasource.password=springboot
 4. After that your connection will be established automatically once you start your application. Select thefile conataining java main function to run this project. In this project it is BlogAppApisApplication.java file.
 5. Now access your api using postman or browser.
 
