@@ -1,6 +1,21 @@
 # Blog Application API's
 This application provides api's for a blog application.
 
+## How to use the source codes of this project to run it?
+1. Firstly download it or clone it to your device.
+2. Then in use the SQL Script to make a new database in MySQL. Since this application stores and reads data from a database it is important to first make the databse.
+3. To establish the connection betweeen the spring project and the db, make sure the application.properties are setup properly.
+	1. spring.datasource.url=jdbc:mysql://localhost:portAddress/projectName
+	2. spring.datasource.username=username
+	3. spring.datasource.password=password
+Example,
+
+	1. spring.datasource.url=jdbc:mysql://localhost:3306/blog_app_apis
+	2. spring.datasource.username=springboot
+	3. spring.datasource.password=springboot
+4. After that your connection will be established automatically once you start your application. Select thefile conataining java main function to run this project. In this project it is BlogAppApisApplication.java file.
+5. Now access your api using postman or browser.
+
 ## Naming Convention
 
 ##### For Database:
